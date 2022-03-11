@@ -1,7 +1,7 @@
 {
-  "name": "fs-app-template",
+  "name": "2048",
   "version": "2.0.0",
-  "description": "Some boilerplate code to get you started - get shakin'!",
+  "description": "2048 clone turned fullstack web-app!",
   "main": "index.js",
   "scripts": {
     "build": "webpack",
