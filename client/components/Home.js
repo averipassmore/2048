@@ -27,6 +27,7 @@ export const Home = props => {
         <div class="cell"></div>
         <div class="cell"></div>
         <div class="cell"></div>
+        <div class="tile">4</div>
       </div>
     </div>
   )
