@@ -28,6 +28,8 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",
     "pg": "^8.5.1",
+    "react-swipeable": "^6.2.0",
+    "react-swipeable-views": "^0.14.0",
     "sequelize": "^6.3.5"
   },
   "devDependencies": {
