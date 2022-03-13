@@ -1,13 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import connect from "react-redux";
+const cloneDeep = require("clone-deep");
 
 function Grid() {
+  
+  useEffect(() => {
+    initializeGrid();
+  }, []) 
+
   const [data, setData] = useState([
-    [2, 4, 0, 0],
+    [0, 0, 0, 0],
     [0, 0, 0, 0],
     [0, 0, 0, 0],
     [0, 0, 0, 0],
   ]);
+
+  const initializeGrid = () => {
+    let startingGrid = cloneDeep(data);
+    addNumber(startingGrid);
+    addNumber(startingGrid);
+    setData(startingGrid);
+  }
+
+  const addNumber = (newGrid) => {
+    let added = false;
+    let gridFull = false;
+    let attempts = 0;
+
+    while(!added) {
+      if (gridFull) {
+        break;
+      }
+      let rowPostion = Math.floor(Math.random() * 4);
+      let columnPosition = Math.floor(Math.random() * 4);
+      attempts++;
+      if(newGrid[rowPostion][columnPosition] === 0) {
+        newGrid[rowPostion][columnPosition] = Math.random() > 0.5 ? 2 : 4;
+        added = true;
+      }
+    }
+  }
 
   return (
     <div style={{
@@ -17,7 +49,6 @@ function Grid() {
       padding: 5,
       borderRadius: 5,
       marginTop: 10,
-
     }}>
       {data.map((row, index) => {
         return (
