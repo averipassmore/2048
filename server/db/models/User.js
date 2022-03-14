@@ -20,7 +20,7 @@ const User = db.define('user', {
   },
   cell2: {
     type: Sequelize.INTEGER,
-    default: 0
+    defaultValue: 0
   },
   cell3: {
     type: Sequelize.INTEGER,

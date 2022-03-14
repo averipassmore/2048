@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {connect} from "react-redux";
 const cloneDeep = require("clone-deep");
-import { useEvent } from "../utils"
+import { useEvent, getColors } from "../utils"
 import axios from "axios";
 
 export const Grid = props => {
@@ -11,8 +11,12 @@ export const Grid = props => {
   const LEFT_ARROW = 37;
   const RIGHT_ARROW = 39;
   
+  const id = props.id.id;
+  console.log(id);
+
   useEffect(() => {
     initializeGrid();
+
   }, []) 
 
 
@@ -24,7 +28,7 @@ export const Grid = props => {
   ]);
 
   async function getGrid() {
-    const response = await axios.get(`/api/users/${props.id.id}/grid`);
+    const response = await axios.get(`/api/users/${2}/grid`);
     let cells = response.data;
     //console.log(cells);
     //console.log('here is user Id ', props.id);
@@ -38,7 +42,7 @@ export const Grid = props => {
 
   async function putRouteForUserGrid (grid) {
     console.log(props);
-    await axios.put(`/api/users/${props.id.id}/grid`, {
+    await axios.put(`/api/users/${2}/grid`, {
       "cell1": grid[0][0],
       "cell2": grid[0][1],
       "cell3": grid[0][2],
@@ -66,7 +70,7 @@ export const Grid = props => {
         if (startingGrid[i][j] !== 0) {
           await putRouteForUserGrid(startingGrid)
           setData(startingGrid);
-          return;
+          return 0;
         }
       }
     }
@@ -167,9 +171,8 @@ export const Grid = props => {
         }
       }
     }
-    if (JSON.stringify(newArray) !== JSON.stringify(oldGrid)) {
-      addNumber(newArray);
-    }
+    if (JSON.stringify(newArray) !== JSON.stringify(oldGrid)) addNumber(newArray);
+
     await putRouteForUserGrid(newArray)
     setData(newArray);
   };
@@ -299,7 +302,8 @@ const Block = ({num}) => {
   return (
     <div style={{
       ...blockStyle,
-      color: num === 2 || num === 4 ? "red" : "blue",
+      background: getColors(num),
+      color: 'white',
     }}>{num !== 0 && num}</div>
   )
 }
