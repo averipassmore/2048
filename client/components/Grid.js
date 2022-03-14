@@ -28,7 +28,9 @@ export const Grid = props => {
 
   const [gameOver, setGameOver] = useState(false);
 
-  //const [id, setUserId] = useState(userId)
+  const [score, setScore] = useState(0);
+
+  const [highScore, setHighScore] = useState(0);
 
 
   async function getGrid() {
@@ -136,6 +138,8 @@ export const Grid = props => {
         else if (row[leftValueIndex] !== 0 && row[rightValueIndex] !== 0) {
           if (row[leftValueIndex] === row[rightValueIndex]) {
             row[leftValueIndex] = row[leftValueIndex] + row[rightValueIndex];
+            setScore(score + row[leftValueIndex] + row[rightValueIndex]);
+            await axios.put(`/api/users/${props.id.id}/grid`, {"currentScore": score})
             row[rightValueIndex] = 0;
             rightValueIndex = leftValueIndex + 1;
             leftValueIndex++;
@@ -178,6 +182,8 @@ export const Grid = props => {
         else if (row[rightValueIndex] !== 0 && row[leftValueIndex] !== 0) {
           if (row[rightValueIndex] === row[leftValueIndex]) {
             row[rightValueIndex] = row[rightValueIndex] + row[leftValueIndex];
+            setScore(score + row[leftValueIndex] + row[rightValueIndex]);
+            await axios.put(`/api/users/${props.id.id}/grid`, {"currentScore": score});
             row[leftValueIndex] = 0;
             leftValueIndex = rightValueIndex - 1;
             rightValueIndex--;
@@ -221,6 +227,8 @@ export const Grid = props => {
         else if (newArray[lowRowIndex][i] !== 0 && newArray[highRowIndex][i] !== 0) {
           if (newArray[lowRowIndex][i] === newArray[highRowIndex][i]) {
             newArray[lowRowIndex][i] = newArray[lowRowIndex][i] + newArray[highRowIndex][i];
+            setScore(score + newArray[lowRowIndex][i] + newArray[highRowIndex][i])
+            await axios.put(`/api/users/${props.id.id}/grid`, {"currentScore": score})
             newArray[highRowIndex][i] = 0;
             highRowIndex = lowRowIndex - 1;
             lowRowIndex--;
@@ -261,6 +269,8 @@ export const Grid = props => {
         else if (newArray[highRowIndex][i] !== 0 && newArray[lowRowIndex][i] !== 0) {
           if (newArray[highRowIndex][i] === newArray[lowRowIndex][i]) {
             newArray[highRowIndex][i] = newArray[highRowIndex][i] + newArray[lowRowIndex][i];
+            setScore(score + newArray[lowRowIndex][i] + newArray[highRowIndex][i]);
+            await axios.put(`/api/users/${props.id.id}/grid`, {"currentScore": score});
             newArray[lowRowIndex][i] = 0;
             lowRowIndex = highRowIndex + 1;
             highRowIndex++;
@@ -315,6 +325,7 @@ export const Grid = props => {
   }
 
   const handleKeyPress = async (event) => {
+    event.preventDefault();
     if (gameOver) return;
     switch(event.keyCode) {
       case UP_ARROW:
@@ -335,6 +346,9 @@ export const Grid = props => {
     if (await checkGameStatus()) {
       alert("game over")
       setGameOver(true)
+      const highScore = await axios.get(`api/users/${props.id.id}/highScore`);
+      console.log(highScore);
+      if (highScore.data.highScore < score) await axios.put(`api/users/${props.id.id}/score`, {"highScore": score});
     };
   }
 
@@ -342,7 +356,10 @@ export const Grid = props => {
 
   return (
     <div>
-      <div onClick={resetGrid} style={style.newGameButton}>NEW GAME</div>
+      <div style={style.newGameButton}>
+        <div onClick={resetGrid}>NEW GAME</div>
+        <div style={style.newGameButton}>{score}</div>
+      </div>
       <div style={{
       background: "black",
       width: "max-content",
@@ -396,7 +413,12 @@ const style = {
     width: 95,
     borderRadius: 7,
     fontWeight: "900",
+    marginLeft: "auto",
+    marginBottom: "auto",
     cursor: "pointer",
+    display: "flex",
+    flexDirection: "row",
+    alignSelf: "center"
   },
 }
 

@@ -37,3 +37,24 @@ router.put('/:id/grid', async (req, res, next) => {
     next(error);
   }
 })
+
+router.put('/:id/score', async (req, res, next) => {
+  try {
+    const userScore = await User.findByPk(req.params.id);
+    await userScore.update(req.body);
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.get('/:id/highScore', async (req, res, next) => {
+  try {
+    const highScore = await User.findByPk(req.params.id, {
+      attributes: ['highScore']
+    })
+    res.json(highScore);
+  } catch (error) {
+    next(error);
+  }
+})
+
