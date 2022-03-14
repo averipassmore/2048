@@ -15,3 +15,25 @@ router.get('/', async (req, res, next) => {
     next(err)
   }
 })
+
+router.get('/:id/grid', async (req, res, next) => {
+  //console.log(req.params.id);
+  try {
+      const grid = await User.findByPk(req.params.id, {
+      attributes: ['cell1', 'cell2', 'cell3', 'cell4', 'cell5', 'cell6', 'cell7', 'cell8', 'cell9', 'cell10', 'cell11', 'cell12', 'cell13', 'cell14', 'cell15', 'cell16']
+    })
+    res.json(grid);
+  } catch (error) {
+    next(error);
+  }
+})
+
+router.put('/:id/grid', async (req, res, next) => {
+  try {
+    const userGrid = await User.findByPk(req.params.id);
+    await userGrid.update(req.body);
+    res.json(userGrid);
+  } catch (error) {
+    next(error);
+  }
+})

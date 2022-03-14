@@ -2,7 +2,6 @@ const Sequelize = require('sequelize')
 const db = require('../db')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
-const axios = require('axios');
 
 const SALT_ROUNDS = 5;
 
@@ -14,6 +13,78 @@ const User = db.define('user', {
   },
   password: {
     type: Sequelize.STRING,
+  },
+  cell1: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell2: {
+    type: Sequelize.INTEGER,
+    default: 0
+  },
+  cell3: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell4: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell5: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell6: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell7: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell8: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell9: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell10: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell11: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell12: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell13: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell14: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell15: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  cell16: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  currentScore: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
+  highScore: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   }
 })
 

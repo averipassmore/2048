@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import connect from "react-redux";
+import {connect} from "react-redux";
 const cloneDeep = require("clone-deep");
 import { useEvent } from "../utils"
+import axios from "axios";
 
-function Grid() {
+export const Grid = props => {
 
   const UP_ARROW = 38;
   const DOWN_ARROW = 40;
@@ -14,6 +15,7 @@ function Grid() {
     initializeGrid();
   }, []) 
 
+
   const [data, setData] = useState([
     [0, 0, 0, 0],
     [0, 0, 0, 0],
@@ -21,16 +23,63 @@ function Grid() {
     [0, 0, 0, 0],
   ]);
 
-  const initializeGrid = () => {
-    let startingGrid = cloneDeep(data);
+  async function getGrid() {
+    const response = await axios.get(`/api/users/${props.id.id}/grid`);
+    let cells = response.data;
+    //console.log(cells);
+    //console.log('here is user Id ', props.id);
+    return ([
+      [cells.cell1, cells.cell2, cells.cell3, cells.cell4],
+      [cells.cell5, cells.cell6, cells.cell7, cells.cell8],
+      [cells.cell9, cells.cell10, cells.cell11, cells.cell12],
+      [cells.cell13, cells.cell14, cells.cell15, cells.cell16],
+    ])
+  }
+
+  async function putRouteForUserGrid (grid) {
+    console.log(props);
+    await axios.put(`/api/users/${props.id.id}/grid`, {
+      "cell1": grid[0][0],
+      "cell2": grid[0][1],
+      "cell3": grid[0][2],
+      "cell4": grid[0][3],
+      "cell5": grid[1][0],
+      "cell6": grid[1][1],
+      "cell7": grid[1][2],
+      "cell8": grid[1][3],
+      "cell9": grid[2][0],
+      "cell10": grid[2][1],
+      "cell11": grid[2][2],
+      "cell12": grid[2][3],
+      "cell13": grid[3][0],
+      "cell14": grid[3][1],
+      "cell15": grid[3][2],
+      "cell16": grid[3][3],
+    })
+  } 
+
+  const initializeGrid = async () => {
+    console.log('here is grid ', await getGrid());
+    let startingGrid = await getGrid()//await getGrid();
+    for (let i = 0; i < startingGrid.length; i++) {
+      for (let j = 0; j < startingGrid.length; j++) {
+        if (startingGrid[i][j] !== 0) {
+          await putRouteForUserGrid(startingGrid)
+          setData(startingGrid);
+          return;
+        }
+      }
+    }
     addNumber(startingGrid);
     addNumber(startingGrid);
+    await putRouteForUserGrid(startingGrid)
     setData(startingGrid);
   }
 
   const addNumber = (newGrid) => {
     let added = false;
     let gridFull = false;
+    let attempts = 0;
 
     while(!added) {
       if (gridFull) {
@@ -46,7 +95,7 @@ function Grid() {
     }
   }
 
-  const swipeLeft = () => {
+  const swipeLeft = async () => {
     let oldGrid = data;
     let newArray = cloneDeep(data);
 
@@ -80,13 +129,12 @@ function Grid() {
         }
       }
     }
-    if (JSON.stringify(oldGrid) !== JSON.stringify(newArray)) {
-      addNumber(newArray);
-    }
+    if (JSON.stringify(oldGrid) !== JSON.stringify(newArray)) addNumber(newArray);
+    await putRouteForUserGrid(newArray)
     setData(newArray);
   };
 
-  const swipeRight = () => {
+  const swipeRight = async () => {
     let oldGrid = data;
     let newArray = cloneDeep(data);
 
@@ -122,11 +170,11 @@ function Grid() {
     if (JSON.stringify(newArray) !== JSON.stringify(oldGrid)) {
       addNumber(newArray);
     }
+    await putRouteForUserGrid(newArray)
     setData(newArray);
   };
 
-  const swipeDown = () => {
-    console.log(data);
+  const swipeDown = async () => {
     let newArray = cloneDeep(data);
     let oldGrid = data;
     for (let i = newArray.length - 1; i >= 0; i--) {
@@ -160,11 +208,11 @@ function Grid() {
       }
     }
     if (JSON.stringify(newArray) !== JSON.stringify(oldGrid)) addNumber(newArray);
-    
+    await putRouteForUserGrid(newArray)
     setData(newArray);
   };
 
-  const swipeUp = () => {
+  const swipeUp = async () => {
     let newArray = cloneDeep(data);
     let oldGrid = data;
     for (let i = 0; i < newArray.length; i++) {
@@ -197,6 +245,8 @@ function Grid() {
     }
     if (JSON.stringify(oldGrid) !== JSON.stringify(newArray)) addNumber(newArray);
       
+    await putRouteForUserGrid(newArray)
+
     setData(newArray);
   };
 
@@ -267,4 +317,11 @@ const style = {
   }
 }
 
-export default Grid;
+const mapState = state => {
+  return {
+    username: state.auth.username,
+    id: state.auth
+  }
+}
+
+export default connect(mapState)(Grid);

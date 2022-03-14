@@ -1,5 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import Grid from './Grid'
 
 /**
  * COMPONENT
@@ -10,38 +11,11 @@ import {connect} from 'react-redux'
 
 export const Home = props => {
   const {username} = props
-  // const GRID_SIZE = 4;
-  // const CELL_SIZE = 20;
-  // const CELL_GAP = 2;
 
-  // function setGrid() {
-  //   document.documentElement.style.setProperty('--grid-size', GRID_SIZE);
-  //   document.documentElement.style.setProperty('--cell-size', `${CELL_SIZE}vmin`);
-  //   document.documentElement.style.setProperty('--cell-gap', `${CELL_GAP}vmin`);
-  // }
   return (
     <div>
       <h3>Welcome, {username}</h3>
-      {/* <div id="game-board">
-      {setGrid()}
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="cell"></div>
-        <div className="tile">4</div>
-      </div> */}
+      <Grid id={props.id}/>
     </div>
   )
 }
@@ -51,6 +25,7 @@ export const Home = props => {
  */
 const mapState = state => {
   return {
+    id: state.auth.id,
     username: state.auth.username
   }
 }
