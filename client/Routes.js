@@ -5,6 +5,7 @@ import { Login, Signup } from './components/AuthForm';
 import Home from './components/Home';
 import {me} from './store'
 import Grid from './components/Grid';
+import LeaderBoard from './components/LeaderBoard'
 
 /**
  * COMPONENT
@@ -24,6 +25,7 @@ class Routes extends Component {
             <Route path="/home" component={Home} />
             {/* <Redirect to="/home" /> */}
             <Route path="/grid" component={Grid} />
+            <Route path="/leaderboard" component={LeaderBoard} />
           </Switch>
         ) : (
           <Switch>

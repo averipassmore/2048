@@ -58,3 +58,15 @@ router.get('/:id/highScore', async (req, res, next) => {
   }
 })
 
+router.get('/leaders', async (req, res, next) => {
+  try {
+    const leaders = await User.findAll({
+      order: [
+        ['highScore', 'ASC']
+      ]
+    })
+    res.json(leaders);
+  } catch (error) {
+    next(error);
+  }
+})

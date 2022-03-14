@@ -80,10 +80,14 @@ export const Grid = props => {
         }
       }
     }
+    const highScore = await axios.get(`api/users/${props.id.id}/highScore`);
+    console.log(highScore)
+    setHighScore(10000);
     addNumber(startingGrid);
     addNumber(startingGrid);
     await putRouteForUserGrid(startingGrid)
     setData(startingGrid);
+
   }
 
   const addNumber = (newGrid) => {
@@ -322,6 +326,7 @@ export const Grid = props => {
     await putRouteForUserGrid(newGrid)
     setData(newGrid);
     setGameOver(false);
+    setScore(0);
   }
 
   const handleKeyPress = async (event) => {
@@ -348,7 +353,10 @@ export const Grid = props => {
       setGameOver(true)
       const highScore = await axios.get(`api/users/${props.id.id}/highScore`);
       console.log(highScore);
-      if (highScore.data.highScore < score) await axios.put(`api/users/${props.id.id}/score`, {"highScore": score});
+      if (highScore.data.highScore < score) {
+        await axios.put(`api/users/${props.id.id}/score`, {"highScore": score});
+        // setHighScore(highScore);
+      }
     };
   }
 
@@ -358,7 +366,7 @@ export const Grid = props => {
     <div>
       <div style={style.newGameButton}>
         <div onClick={resetGrid}>NEW GAME</div>
-        <div style={style.newGameButton}>{score}</div>
+        <div style={style.newGameButton}>score:{score}</div>
       </div>
       <div style={{
       background: "black",
@@ -378,6 +386,7 @@ export const Grid = props => {
         )
       })}
       </div>
+      <div style={style.newGameButton}>high score:{highScore}</div>
     </div>
   )
 }
@@ -418,7 +427,8 @@ const style = {
     cursor: "pointer",
     display: "flex",
     flexDirection: "row",
-    alignSelf: "center"
+    alignSelf: "center",
+    justifyContent: 'space-between'
   },
 }
 
