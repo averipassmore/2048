@@ -32,7 +32,7 @@ export const Grid = props => {
 
 
   async function getGrid() {
-    const response = await axios.get(`/api/users/${2}/grid`);
+    const response = await axios.get(`/api/users/${props.id.id}/grid`);
     let cells = response.data;
     //console.log(cells);
     //console.log('here is user Id ', props.id);
@@ -46,7 +46,7 @@ export const Grid = props => {
 
   async function putRouteForUserGrid (grid) {
    // console.log(props);
-    await axios.put(`/api/users/${2}/grid`, {
+    await axios.put(`/api/users/${props.id.id}/grid`, {
       "cell1": grid[0][0],
       "cell2": grid[0][1],
       "cell3": grid[0][2],
