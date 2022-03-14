@@ -25,6 +25,15 @@
   border-radius: 1vmin;
 }
 
+/* .App {
+  text-align: center;
+  overscroll-behavior: none;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+} */
+
 .tile {
   --x: 2;
   --y: 0;

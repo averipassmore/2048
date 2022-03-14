@@ -11,12 +11,11 @@ export const Grid = props => {
   const LEFT_ARROW = 37;
   const RIGHT_ARROW = 39;
   
-  const id = props.id.id;
-  console.log(id);
+  const userId = props.id.id;
+  
 
   useEffect(() => {
     initializeGrid();
-
   }, []) 
 
 
@@ -26,6 +25,11 @@ export const Grid = props => {
     [0, 0, 0, 0],
     [0, 0, 0, 0],
   ]);
+
+  const [gameOver, setGameOver] = useState(false);
+
+  //const [id, setUserId] = useState(userId)
+
 
   async function getGrid() {
     const response = await axios.get(`/api/users/${2}/grid`);
@@ -41,7 +45,7 @@ export const Grid = props => {
   }
 
   async function putRouteForUserGrid (grid) {
-    console.log(props);
+   // console.log(props);
     await axios.put(`/api/users/${2}/grid`, {
       "cell1": grid[0][0],
       "cell2": grid[0][1],
@@ -63,7 +67,7 @@ export const Grid = props => {
   } 
 
   const initializeGrid = async () => {
-    console.log('here is grid ', await getGrid());
+    //console.log('here is grid ', await getGrid());
     let startingGrid = await getGrid()//await getGrid();
     for (let i = 0; i < startingGrid.length; i++) {
       for (let j = 0; j < startingGrid.length; j++) {
@@ -84,7 +88,6 @@ export const Grid = props => {
     let added = false;
     let gridFull = false;
     let attempts = 0;
-
     while(!added) {
       if (gridFull) {
         break;
@@ -92,14 +95,24 @@ export const Grid = props => {
       let rowIndex = Math.floor(Math.random() * 4);
       let columnIndex = Math.floor(Math.random() * 4);
       attempts++;
-      if(newGrid[rowIndex][columnIndex] === 0) {
+      if (newGrid[rowIndex][columnIndex] === 0) {
         newGrid[rowIndex][columnIndex] = Math.random() > 0.5 ? 2 : 4;
         added = true;
       }
+
+      // if (attempts > 50) {
+      //   gridFull = true;
+      //   let gameOverr = checkGameStatus();
+      //   if(gameOverr) {
+      //     alert("game over");
+      //     // setGameOver(true);
+      //   }
+      //   // setGameOver(true);
+      // }
     }
   }
 
-  const swipeLeft = async () => {
+  const swipeLeft = async (pseudo) => {
     let oldGrid = data;
     let newArray = cloneDeep(data);
 
@@ -134,11 +147,15 @@ export const Grid = props => {
       }
     }
     if (JSON.stringify(oldGrid) !== JSON.stringify(newArray)) addNumber(newArray);
-    await putRouteForUserGrid(newArray)
-    setData(newArray);
+    if (pseudo) {
+      return newArray;
+    } else {
+      await putRouteForUserGrid(newArray)
+      setData(newArray);
+    }
   };
 
-  const swipeRight = async () => {
+  const swipeRight = async (pseudo) => {
     let oldGrid = data;
     let newArray = cloneDeep(data);
 
@@ -173,11 +190,15 @@ export const Grid = props => {
     }
     if (JSON.stringify(newArray) !== JSON.stringify(oldGrid)) addNumber(newArray);
 
-    await putRouteForUserGrid(newArray)
-    setData(newArray);
+    if (pseudo) {
+      return newArray;
+    } else {
+      await putRouteForUserGrid(newArray)
+      setData(newArray);
+    }
   };
 
-  const swipeDown = async () => {
+  const swipeDown = async (pseudo) => {
     let newArray = cloneDeep(data);
     let oldGrid = data;
     for (let i = newArray.length - 1; i >= 0; i--) {
@@ -211,11 +232,15 @@ export const Grid = props => {
       }
     }
     if (JSON.stringify(newArray) !== JSON.stringify(oldGrid)) addNumber(newArray);
-    await putRouteForUserGrid(newArray)
-    setData(newArray);
+    if (pseudo) {
+      return newArray;
+    } else {
+      await putRouteForUserGrid(newArray)
+      setData(newArray);
+    }
   };
 
-  const swipeUp = async () => {
+  const swipeUp = async (pseudo) => {
     let newArray = cloneDeep(data);
     let oldGrid = data;
     for (let i = 0; i < newArray.length; i++) {
@@ -246,42 +271,86 @@ export const Grid = props => {
         }
       }
     }
+
     if (JSON.stringify(oldGrid) !== JSON.stringify(newArray)) addNumber(newArray);
       
-    await putRouteForUserGrid(newArray)
-
-    setData(newArray);
+    if (pseudo) {
+      return newArray;
+    } else {
+      await putRouteForUserGrid(newArray)
+      setData(newArray);
+    }
   };
 
-  const handleKeyPress = (event) => {
+  const checkGameStatus = async () => {
+
+    let pseudoGrid = await swipeLeft(true);
+    if (JSON.stringify(data) !== JSON.stringify(pseudoGrid)) return false;
+
+    pseudoGrid = await swipeDown(true);
+    if (JSON.stringify(data) !== JSON.stringify(pseudoGrid)) return false;
+
+    pseudoGrid = await swipeRight(true);
+    if (JSON.stringify(data) !== JSON.stringify(pseudoGrid)) return false;
+
+    pseudoGrid = await swipeUp(true);
+    if (JSON.stringify(data) !== JSON.stringify(pseudoGrid)) return false;
+  
+    return true;
+  }
+
+  const resetGrid = async () => {
+    const newGrid = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
+
+    addNumber(newGrid);
+    addNumber(newGrid);
+    await putRouteForUserGrid(newGrid)
+    setData(newGrid);
+    setGameOver(false);
+  }
+
+  const handleKeyPress = async (event) => {
+    if (gameOver) return;
     switch(event.keyCode) {
       case UP_ARROW:
-        swipeUp();
+        await swipeUp();
         break;
       case DOWN_ARROW:
-        swipeDown();
+        await swipeDown();
         break;
       case LEFT_ARROW:
-        swipeLeft();
+        await swipeLeft();
         break;
       case RIGHT_ARROW:
-        swipeRight();
+        await swipeRight();
         break;
       default:
         break;
     }
+    if (await checkGameStatus()) {
+      alert("game over")
+      setGameOver(true)
+    };
   }
+
   useEvent("keydown", handleKeyPress);
 
   return (
-    <div style={{
+    <div>
+      <div onClick={resetGrid} style={style.newGameButton}>NEW GAME</div>
+      <div style={{
       background: "black",
       width: "max-content",
       margin: "auto",
       padding: 5,
       borderRadius: 5,
       marginTop: 10,
-    }}>
+      }}>
       {data.map((row, index) => {
         return (
           <div style={{ display: "flex" }} key={index}>
@@ -291,6 +360,7 @@ export const Grid = props => {
           </div>
         )
       })}
+      </div>
     </div>
   )
 }
@@ -318,7 +388,16 @@ const style = {
     alignItems: "center",
     fontSize: 50,
     color: "white"
-  }
+  },
+  newGameButton: {
+    padding: 10,
+    background: "#DDBDFC",
+    color: "#F8F5F0",
+    width: 95,
+    borderRadius: 7,
+    fontWeight: "900",
+    cursor: "pointer",
+  },
 }
 
 const mapState = state => {
